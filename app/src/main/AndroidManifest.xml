@@ -29,14 +29,7 @@
 
         <service android:name=".MyService" />
 
-        <receiver
-            android:name="com.example.easyservice.Autostart"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
+
     </application>
 
 
