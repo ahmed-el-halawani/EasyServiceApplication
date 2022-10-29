@@ -21,7 +21,13 @@ public class BaseApplication extends Application {
         super.onCreate();
 
 
-        MyService.init(this, new Configuration("EasyServiceChannelDescription", "EasyServiceChannelName", "EasyServiceChannelId", com.example.easyservice.R.drawable.ic_easy_service, true, true),
+        MyService.init(this,
+                new Configuration("EasyServiceChannelDescription",
+                        "EasyServiceChannelName",
+                        "EasyServiceChannelId",
+                        com.example.easyservice.R.drawable.ic_easy_service,
+                        true,
+                        true),
                 MyService.class);
         MyService.startService(this);
 //        MyService.startService(this, MyService.class);

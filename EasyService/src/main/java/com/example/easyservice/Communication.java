@@ -1,10 +1,8 @@
 package com.example.easyservice;
 
-import androidx.arch.core.util.Function;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.Transformations;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,34 +18,33 @@ class Communication {
 
     public final List<Connection> map = new ArrayList<>();
 
-    public final MutableLiveData<Map<String, Map<String, Object>>> mapMutableLiveData = new MutableLiveData<>();
-
+    public final Map<String, MutableLiveData<Map<String, Object>>> liveDataMap = new HashMap<>();
 
     public void observeOn(String key, LifecycleOwner lifecycleOwner, Observer<Map<String, Object>> observer) {
-        Transformations.map(mapMutableLiveData, input -> input.get(key))
-                .observe(lifecycleOwner, observer);
+        if (!liveDataMap.containsKey(key))
+            liveDataMap.put(key, new MutableLiveData<>());
+
+        Objects.requireNonNull(liveDataMap.get(key)).observe(lifecycleOwner, observer);
     }
 
     public void postValue(String key) {
-        mapMutableLiveData.postValue(new HashMap<>() {{
-            put(key, new HashMap<>());
-        }});
+        if (liveDataMap.containsKey(key))
+            Objects.requireNonNull(liveDataMap.get(key)).postValue(new HashMap<>() {{
+                put(key, new HashMap<>());
+            }});
     }
 
     public void postValue(String key, Map<String, Object> params) {
-        mapMutableLiveData.postValue(new HashMap<>() {{
-            put(key, params);
-        }});
+        if (liveDataMap.containsKey(key))
+            Objects.requireNonNull(liveDataMap.get(key)).postValue(params);
     }
 
     public void setFunction(Connection connection) {
-
         map.add(connection);
     }
 
 
     public List<Connection> getConnection(String key) {
-        Connection connection = null;
         return map.stream().filter(i -> i.getKey().equals(key)).collect(Collectors.toList());
     }
 
@@ -68,11 +65,6 @@ class Communication {
             conn.getFunction().accept(superServiceBinder, new HashMap<>());
         }
     }
-
-    public List<Connection> getMap() {
-        return map;
-    }
-
 
     @Override
     public String toString() {
